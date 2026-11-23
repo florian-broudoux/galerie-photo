@@ -6,14 +6,29 @@ const modaleTitre = document.querySelector("#modale-titre");
 const modaleInfos = document.querySelector("#modale-infos");
 const modaleResume = document.querySelector("#modale-resume");
 const btnFermer = document.querySelector("#btn-fermer");
-const btnDetail = document.querySelector(".btnDetail");
 const champRecherche = document.querySelector("#recherche-photo");
 const listeTri = document.querySelector("#tri-photos");
 const groupeFiltres = document.querySelector(".filtres-genres");
 const btnFiltre = document.querySelectorAll(".btn-genre");
 const vide = document.querySelector("#message-vide");
 
+const CLE_FAVORIS = "photos-favoris";
+
+function chargerFavori() {
+    const donnees = localStorage.getItem(CLE_FAVORIS);
+    if (donnees === null) {
+        return  [];
+    }
+    return JSON.parse(donnees);
+}
+
+function sauvegarderFavori() {
+    localStorage.setItem(CLE_FAVORIS, JSON.stringify(favoris));
+}
+
 let categorieActuelle = "Toutes";
+
+let favoris = chargerFavori();
 
 function creerCarte(photo) {
     const carte = document.createElement("article");
@@ -37,7 +52,16 @@ function creerCarte(photo) {
     btnDetail.setAttribute("aria-label", `Voir le détail : ${photo.titre}`);
     btnDetail.classList.add("btnDetail");
 
-    carte.append(img, titre, infos, btnDetail);
+    const btnFavori = document.createElement("button");
+    const estFavori = favoris.includes(photo.id);
+    btnFavori.textContent = estFavori ? "♥" : "♡";
+    btnFavori.classList.add("btn-favori");
+    btnFavori.classList.toggle("est-favori", estFavori);
+    btnFavori.setAttribute("aria-label", `Mettre ${photo.titre} en favori`);
+    btnFavori.dataset.id = photo.id;
+    btnFavori.setAttribute("aria-pressed", estFavori ? "true" : "false");
+
+    carte.append(img, titre, infos, btnDetail, btnFavori);
     return carte;
 }
 
@@ -59,9 +83,15 @@ function mettreAJourCompteur(nombre) {
 }
 
 grille.addEventListener("click", (event) => {
-    const btn = event.target.closest(".btnDetail");
-    if (btn !== null) {
-        const carte = btn.closest(".carte-photo");
+    const btnFavori = event.target.closest(".btn-favori");
+    if (btnFavori !== null) {
+       basculerFavori(btnFavori);
+       return;
+    }
+
+    const btnDetail = event.target.closest(".btnDetail");
+    if (btnDetail !== null) {
+        const carte = btnDetail.closest(".carte-photo");
         ouvrirModale(Number(carte.dataset.id));
     }
 });
@@ -149,5 +179,21 @@ groupeFiltres.addEventListener("click", (event) => {
 champRecherche.addEventListener("input", afficherCarte);
 
 listeTri.addEventListener("change", afficherCarte);
+
+function basculerFavori(bouton) {
+    const id = Number(bouton.dataset.id);
+    const estFavori = bouton.classList.toggle("est-favori");
+
+    if (estFavori) {
+        favoris.push(id);
+    } else {
+        favoris = favoris.filter((element) => element !== id);
+    }
+
+    sauvegarderFavori();
+
+    bouton.textContent = estFavori ? "♥" : "♡";
+    bouton.setAttribute("aria-pressed", estFavori ? "true" : "false");
+}
 
 afficherCarte();
