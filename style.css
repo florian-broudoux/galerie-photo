@@ -1,0 +1,74 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    max-width: 600px;
+}
+
+header {
+    display: flexbox;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.filtres-genres {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-genre {
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.actif {
+    background-color: #599bf8;
+    color: #fff;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid #599bf8;
+    outline-offset: 2px;
+}
+
+input, select {
+    display: block;
+}
+
+.carte-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+
+
+#grille-photos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+
+
+@media (min-width: 600px) {
+    header {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #grille-photos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    #grille-photos {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

@@ -1,28 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Galerie photo</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css" />
         <script src="photos.js" defer></script>
         <script src="app.js" defer></script>
     </head>
     <body>
         <header>
-        <h1>Galerie photo</h1>
-        <p id="compteur-photos" aria-live="polite"></p>
+            <h1>Galerie photo</h1>
+            <p id="compteur-photos" aria-live="polite"></p>
         </header>
         <main>
             <div class="filtres-genres" aria-label="genres">
-                <button class="btn-genre actif" data-genre="Tous" aria-pressed="true">Tous</button>
-                <button class="btn-genre" data-genre="Nature" aria-pressed="false">Nature</button>
-                <button class="btn-genre" data-genre="Ville" aria-pressed="false">Ville</button>
-                <button class="btn-genre" data-genre="Portrait" aria-pressed="false">Portrait</button>
-                <button class="btn-genre" data-genre="Architecture" aria-pressed="false">Architecture</button>
+                <button
+                    class="btn-genre actif"
+                    data-genre="Tous"
+                    aria-pressed="true"
+                >
+                    Tous
+                </button>
+                <button
+                    class="btn-genre"
+                    data-genre="Nature"
+                    aria-pressed="false"
+                >
+                    Nature
+                </button>
+                <button
+                    class="btn-genre"
+                    data-genre="Ville"
+                    aria-pressed="false"
+                >
+                    Ville
+                </button>
+                <button
+                    class="btn-genre"
+                    data-genre="Portrait"
+                    aria-pressed="false"
+                >
+                    Portrait
+                </button>
+                <button
+                    class="btn-genre"
+                    data-genre="Architecture"
+                    aria-pressed="false"
+                >
+                    Architecture
+                </button>
             </div>
-            <label for="recherche-photo">Rechercher une photo (titre ou auteur)</label>
-            <input id="recherche-photo" type="search">
+            <label for="recherche-photo"
+                >Rechercher une photo (titre ou auteur)</label
+            >
+            <input id="recherche-photo" type="search" />
             <label for="tri-photos">Trier par</label>
             <select id="tri-photos">
                 <option value="titre">Titre (A → Z)</option>
@@ -30,7 +62,16 @@
                 <option value="date">Date (plus récente d'abord)</option>
             </select>
             <section id="grille-photos" aria-label="Photos"></section>
-            <p id="message-vide" hidden>Aucune photo ne correspond à votre recherche</p>
+            <p id="message-vide" hidden>
+                Aucune photo ne correspond à votre recherche
+            </p>
         </main>
+        <dialog id="modale-photo" aria-labelledby="modale-photo">
+            <img id="modale-img" alt="" />
+            <h2 id="modale-titre"></h2>
+            <p id="modale-infos"></p>
+            <p id="modale-resume"></p>
+            <button id="btn-fermer">Fermer</button>
+        </dialog>
     </body>
 </html>
