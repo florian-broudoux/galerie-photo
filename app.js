@@ -1,3 +1,5 @@
+const grille = document.querySelector("#grille-photos");
+
 function creerCarte(photo) {
     const carte = document.createElement("article");
     carte.classList.add("carte-photo");
@@ -19,4 +21,17 @@ function creerCarte(photo) {
     btnDetail.textContent = "Voir le détail";
     btnDetail.setAttribute("aria-label", `Voir le détail : ${photo.titre}`);
     btnDetail.classList.add("btnDetail");
+
+    carte.append(img, titre, infos, btnDetail);
+    return carte;
 }
+
+function afficherCarte() {
+    grille.innerHTML = "";
+    const cartes = photos.map(creerCarte);
+    grille.append(...cartes);
+    mettreAJourCompteur();
+}
+
+
+afficherCarte();
