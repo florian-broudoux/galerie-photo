@@ -17,7 +17,7 @@ const CLE_FAVORIS = "photos-favoris";
 function chargerFavori() {
     const donnees = localStorage.getItem(CLE_FAVORIS);
     if (donnees === null) {
-        return  [];
+        return [];
     }
     return JSON.parse(donnees);
 }
@@ -85,8 +85,8 @@ function mettreAJourCompteur(nombre) {
 grille.addEventListener("click", (event) => {
     const btnFavori = event.target.closest(".btn-favori");
     if (btnFavori !== null) {
-       basculerFavori(btnFavori);
-       return;
+        basculerFavori(btnFavori);
+        return;
     }
 
     const btnDetail = event.target.closest(".btnDetail");
