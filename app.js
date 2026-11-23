@@ -1,4 +1,5 @@
 const grille = document.querySelector("#grille-photos");
+const compteur = document.querySelector("#compteur-photos");
 
 function creerCarte(photo) {
     const carte = document.createElement("article");
@@ -31,6 +32,10 @@ function afficherCarte() {
     const cartes = photos.map(creerCarte);
     grille.append(...cartes);
     mettreAJourCompteur();
+}
+
+function mettreAJourCompteur() {
+    compteur.textContent = `${photos.length} photos`;
 }
 
 
