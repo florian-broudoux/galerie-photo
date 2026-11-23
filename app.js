@@ -1,3 +1,5 @@
+
+// Récupération des éléments HTML
 const grille = document.querySelector("#grille-photos");
 const compteur = document.querySelector("#compteur-photos");
 const modalePhoto = document.querySelector("#modale-photo");
@@ -12,8 +14,13 @@ const groupeFiltres = document.querySelector(".filtres-genres");
 const btnFiltre = document.querySelectorAll(".btn-genre");
 const vide = document.querySelector("#message-vide");
 
+// Clé utilisée pour enregistrer les favoris
 const CLE_FAVORIS = "photos-favoris";
 
+let categorieActuelle = "Toutes";
+let favoris = chargerFavori();
+
+// Récupère les favoris enregistrés dans le localStorage
 function chargerFavori() {
     const donnees = localStorage.getItem(CLE_FAVORIS);
     if (donnees === null) {
@@ -22,14 +29,29 @@ function chargerFavori() {
     return JSON.parse(donnees);
 }
 
+// Enregistre les favoris dans le localStorage
 function sauvegarderFavori() {
     localStorage.setItem(CLE_FAVORIS, JSON.stringify(favoris));
 }
 
-let categorieActuelle = "Toutes";
+// Ajoute ou retire une photo des favoris
+function basculerFavori(bouton) {
+    const id = Number(bouton.dataset.id);
+    const estFavori = bouton.classList.toggle("est-favori");
 
-let favoris = chargerFavori();
+    if (estFavori) {
+        favoris.push(id);
+    } else {
+        favoris = favoris.filter((element) => element !== id);
+    }
 
+    sauvegarderFavori();
+
+    bouton.textContent = estFavori ? "♥" : "♡";
+    bouton.setAttribute("aria-pressed", estFavori ? "true" : "false");
+}
+
+// Crée une carte photo avec ses informations et ses boutons
 function creerCarte(photo) {
     const carte = document.createElement("article");
     carte.classList.add("carte-photo");
@@ -65,6 +87,12 @@ function creerCarte(photo) {
     return carte;
 }
 
+// Met à jour le nombre de photos affichées
+function mettreAJourCompteur(nombre) {
+    compteur.textContent = `${nombre} photos`;
+}
+
+// Affiche les cartes correspondant aux critères sélectionnés
 function afficherCarte() {
     const visibles = photosAAfficher();
     grille.innerHTML = "";
@@ -78,24 +106,7 @@ function afficherCarte() {
     }
 }
 
-function mettreAJourCompteur(nombre) {
-    compteur.textContent = `${nombre} photos`;
-}
-
-grille.addEventListener("click", (event) => {
-    const btnFavori = event.target.closest(".btn-favori");
-    if (btnFavori !== null) {
-        basculerFavori(btnFavori);
-        return;
-    }
-
-    const btnDetail = event.target.closest(".btnDetail");
-    if (btnDetail !== null) {
-        const carte = btnDetail.closest(".carte-photo");
-        ouvrirModale(Number(carte.dataset.id));
-    }
-});
-
+// Ouvre la modale avec les informations de la photo sélectionnée
 function ouvrirModale(id) {
     const photo = photos.find((element) => element.id === id);
     if (photo === undefined) {
@@ -109,16 +120,7 @@ function ouvrirModale(id) {
     modalePhoto.showModal();
 }
 
-btnFermer.addEventListener("click", () => {
-    modalePhoto.close();
-});
-
-modalePhoto.addEventListener("click", (event) => {
-    if (event.target === modalePhoto) {
-        modalePhoto.close();
-    }
-});
-
+// Filtre, recherche et trie les photos à afficher
 function photosAAfficher() {
     const recherche = champRecherche.value.trim().toLowerCase();
     let resultat = photos.filter((photo) => {
@@ -158,6 +160,34 @@ function photosAAfficher() {
     return resultat;
 }
 
+// Gère les clics sur les boutons des cartes
+grille.addEventListener("click", (event) => {
+    const btnFavori = event.target.closest(".btn-favori");
+    if (btnFavori !== null) {
+        basculerFavori(btnFavori);
+        return;
+    }
+
+    const btnDetail = event.target.closest(".btnDetail");
+    if (btnDetail !== null) {
+        const carte = btnDetail.closest(".carte-photo");
+        ouvrirModale(Number(carte.dataset.id));
+    }
+});
+
+// Ferme la modale avec le bouton Fermer
+btnFermer.addEventListener("click", () => {
+    modalePhoto.close();
+});
+
+// Ferme la modale lors d'un clic sur son arrière-plan
+modalePhoto.addEventListener("click", (event) => {
+    if (event.target === modalePhoto) {
+        modalePhoto.close();
+    }
+});
+
+// Gère la sélection d'un filtre par catégorie
 groupeFiltres.addEventListener("click", (event) => {
     const bouton = event.target.closest(".btn-genre");
     if (bouton === null) {
@@ -176,24 +206,11 @@ groupeFiltres.addEventListener("click", (event) => {
     afficherCarte();
 });
 
+// Actualise les photos lors d'une recherche
 champRecherche.addEventListener("input", afficherCarte);
 
+// Actualise les photos lors d'un changement de tri
 listeTri.addEventListener("change", afficherCarte);
 
-function basculerFavori(bouton) {
-    const id = Number(bouton.dataset.id);
-    const estFavori = bouton.classList.toggle("est-favori");
-
-    if (estFavori) {
-        favoris.push(id);
-    } else {
-        favoris = favoris.filter((element) => element !== id);
-    }
-
-    sauvegarderFavori();
-
-    bouton.textContent = estFavori ? "♥" : "♡";
-    bouton.setAttribute("aria-pressed", estFavori ? "true" : "false");
-}
-
+// Affiche les photos au chargement de la page
 afficherCarte();
