@@ -7,6 +7,13 @@ const modaleInfos = document.querySelector("#modale-infos");
 const modaleResume = document.querySelector("#modale-resume");
 const btnFermer = document.querySelector("#btn-fermer");
 const btnDetail = document.querySelector(".btnDetail");
+const champRecherche = document.querySelector("#recherche-photo");
+const listeTri = document.querySelector("#tri-photos");
+const groupeFiltres = document.querySelector(".filtres-genres");
+const btnFiltre = document.querySelectorAll(".btn-genre");
+const vide = document.querySelector("#message-vide");
+
+let categorieActuelle = "Toutes";
 
 function creerCarte(photo) {
     const carte = document.createElement("article");
@@ -35,14 +42,20 @@ function creerCarte(photo) {
 }
 
 function afficherCarte() {
+    const visibles = photosAAfficher();
     grille.innerHTML = "";
-    const cartes = photos.map(creerCarte);
-    grille.append(...cartes);
-    mettreAJourCompteur();
+    mettreAJourCompteur(visibles.length);
+    if (visibles.length === 0) {
+        vide.hidden = false;
+    } else {
+        vide.hidden = true;
+        const cartes = visibles.map(creerCarte);
+        grille.append(...cartes);
+    }
 }
 
-function mettreAJourCompteur() {
-    compteur.textContent = `${photos.length} photos`;
+function mettreAJourCompteur(nombre) {
+    compteur.textContent = `${nombre} photos`;
 }
 
 grille.addEventListener("click", (event) => {
@@ -75,5 +88,66 @@ modalePhoto.addEventListener("click", (event) => {
         modalePhoto.close();
     }
 });
+
+function photosAAfficher() {
+    const recherche = champRecherche.value.trim().toLowerCase();
+    let resultat = photos.filter((photo) => {
+        if (categorieActuelle === "Nature") {
+            return photo.categorie === "Nature";
+        }
+
+        if (categorieActuelle === "Ville") {
+            return photo.categorie === "Ville";
+        }
+
+        if (categorieActuelle === "Portrait") {
+            return photo.categorie === "Portrait";
+        }
+
+        if (categorieActuelle === "Architecture") {
+            return photo.categorie === "Architecture";
+        }
+        return true;
+    });
+
+    resultat = resultat.filter(
+        (photo) =>
+            photo.titre.toLowerCase().includes(recherche) ||
+            photo.auteur.toLowerCase().includes(recherche),
+    );
+
+    if (listeTri.value === "titre") {
+        resultat = [...resultat].sort((a, b) => a.titre.localeCompare(b.titre));
+    } else if (listeTri.value === "auteur") {
+        resultat = [...resultat].sort((a, b) =>
+            a.auteur.localeCompare(b.auteur),
+        );
+    } else {
+        resultat = [...resultat].sort((a, b) => b.date.localeCompare(a.date));
+    }
+    return resultat;
+}
+
+groupeFiltres.addEventListener("click", (event) => {
+    const bouton = event.target.closest(".btn-genre");
+    if (bouton === null) {
+        return;
+    }
+
+    btnFiltre.forEach((element) => {
+        element.classList.remove("actif");
+        element.setAttribute("aria-pressed", "false");
+    });
+
+    bouton.classList.add("actif");
+    bouton.setAttribute("aria-pressed", "true");
+
+    categorieActuelle = bouton.dataset.genre;
+    afficherCarte();
+});
+
+champRecherche.addEventListener("input", afficherCarte);
+
+listeTri.addEventListener("change", afficherCarte);
 
 afficherCarte();
